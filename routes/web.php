@@ -2,9 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthController;
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', [AuthController::class, 'index']);
+Route::get('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/create', [AuthController::class, 'create']);
 
 Route::get('/student/{name?}/{id?}', function (string $name = 'HieuLuongXuan', string $id = '123456') {
     return view('student-info', ['name' => $name, 'id' => $id]);
@@ -19,17 +27,16 @@ Route::get('/about', function () {
 });
 
 Route::prefix('product')->group(function () {
-    Route::get('/', function () {
-        return view('product.index');
-    })->name('product');
+    Route::controller(ProductController::class)->group(function () {
 
-    Route::get('/create', function () {
-        return view('product.add');
-    })->name('product.add');
+        Route::get('/', 'index')->name('product');
 
-    Route::get('/{id?}', function (?string $id = '1') {
-        return view('product.detail', ['id' => $id]);
-    })->name('product.detail');
+        Route::get('/create', 'create')->name('product.add');
+
+        Route::get('/detail/{id?}', 'detail')->name('product.detail');
+
+        Route::post('/store', 'store')->name('product.store');
+    });
 });
 
 Route::fallback(fn() => view('not-found'));

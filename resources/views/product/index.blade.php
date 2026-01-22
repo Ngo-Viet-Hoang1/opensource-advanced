@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title></title>
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-    <body>
-        <p>Products</p>
 
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-            </tr>
-            <tr>
-                <td>Sick enough to die</td>
-                <td>100</td>
-            </tr>
-        </table>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title }}</title>
+</head>
 
-        <a href="{{ route('product.add') }}">Add new product</a>
-    </body>
+<body>
+    <p>Products</p>
+
+    <table border='1'>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Price</th>
+            <<th>Actions</th>
+        </tr>
+
+        @foreach ($products as $product)
+            <tr>
+                <td>{{ $product['id'] }}</td>
+                <td>{{ $product['name'] }}</td>
+                <td>{{ $product['price'] }}</td>
+                <td @style('display: flex')>
+                    <div>
+                        Edit
+                    </div>
+                    <div>
+                        Delete
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+    </table>
+
+    <a href="{{ route('product.add') }}">Add new product</a>
+</body>
+
 </html>
