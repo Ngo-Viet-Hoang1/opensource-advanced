@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Middleware\CheckTimeAccess;
 
-class ProductController extends Controller
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+
+class ProductController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [CheckTimeAccess::class,];
+    }
+
     public function index()
     {
         $title = 'Products';
