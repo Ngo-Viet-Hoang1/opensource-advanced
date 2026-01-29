@@ -37,6 +37,9 @@ Route::get('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/create', [AuthController::class, 'create']);
 
+Route::get('sign-in', [AuthController::class, 'SignIn']);
+Route::post('sign-in', [AuthController::class, 'CheckSignIn']);
+
 Route::get('/student/{name?}/{id?}', function (string $name = 'HieuLuongXuan', string $id = '123456') {
     return view('student-info', ['name' => $name, 'id' => $id]);
 });

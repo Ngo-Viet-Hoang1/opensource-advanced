@@ -40,4 +40,29 @@ class AuthController extends Controller
 
         return ['message' => "User {$username} create successfully with password {$hashedPassword}"];
     }
+
+    public function SignIn()
+    {
+        return view('sign-in');
+    }
+
+    public function CheckSignIn(Request $request)
+    {
+        $username = $request->get('username');
+        $password = $request->get('password');
+        $passwordConfirmation = $request->get('password_confirmation');
+        $studentId = $request->get('student_id');
+        $className = $request->get('class_name');
+        $gender = $request->get('gender');
+
+        if ($password !== $passwordConfirmation) {
+            return ['message' => 'Password and confirmation do not match'];
+        }
+
+        if ($username === 'ngoviethoang' && $password === '123456' && $studentId === '123456' && $className === 'CTK43' && $gender === 'male') {
+            return ['message' => 'Sign In Successfully'];
+        }
+
+        return ['message' => 'Sign In Failed'];
+    }
 }
