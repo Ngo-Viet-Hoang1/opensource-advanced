@@ -15,7 +15,9 @@
             <th>Id</th>
             <th>Name</th>
             <th>Price</th>
-            <<th>Actions</th>
+            <th>Stock</th>
+            <th>Actions</th>
+            <th>Actions</th>
         </tr>
 
         @foreach ($products as $product)
@@ -23,13 +25,16 @@
                 <td>{{ $product['id'] }}</td>
                 <td>{{ $product['name'] }}</td>
                 <td>{{ $product['price'] }}</td>
+                <td>{{ $product['stock'] }}</td>
                 <td @style('display: flex')>
-                    <div>
-                        Edit
-                    </div>
-                    <div>
-                        Delete
-                    </div>
+                    <a href="/product/{{ $product->id }}/edit">Edit</a>
+                </td>
+                <td>
+                    <form hidden id='delete-form-{{ $product->id }}' method='post' action='/product/{{ $product->id }}'>
+                        @csrf
+                        @method('delete')
+                    </form>
+                    <button type='submit' form="delete-form-{{ $product->id }}">Delete</button>
                 </td>
             </tr>
         @endforeach

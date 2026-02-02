@@ -3,25 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\CheckTimeAccess;
+use App\Models\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
-class ProductController extends Controller implements HasMiddleware
+class ProductController extends Controller
+/* class ProductController extends Controller implements HasMiddleware */
 {
-    public static function middleware()
-    {
-        return [CheckTimeAccess::class,];
-    }
+    /* public static function middleware() */
+    /* { */
+    /*     return [CheckTimeAccess::class,]; */
+    /* } */
 
     public function index()
     {
         $title = 'Products';
-        $products = [
-            ['id' => 1, 'name' => 'Product A', 'price' => '5000$'],
-            ['id' => 2, 'name' => 'Product B', 'price' => '6000$'],
-            ['id' => 3, 'name' => 'Product C', 'price' => '7000$'],
-        ];
+
+        $products = Product::all();
 
         return view('product.index', ['title' => $title, 'products' => $products]);
     }
@@ -33,12 +32,44 @@ class ProductController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
-        $csrfToken = csrf_token();
-        return $request->all();
+        $product = new Product();
+        $product->name = $request->get('name');
+        $product->price = $request->get('price');
+        $product->stock = $request->get('stock');
+
+        $product->save();
+
+        return redirect('/product');
     }
 
     public function detail(string $id = '123')
     {
         return view('product.detail', ['id' => $id]);
+    }
+
+    public function edit(Product $product)
+    {
+        return view('product.edit', ['product' => $product]);
+    }
+
+    public function update(Product $product)
+    {
+        $name = request()->get('name');
+        $price = request()->get('price');
+        $stock = request()->get('stock');
+        $product->update([
+            'name' => $name,
+            'price' => $price,
+            'stock' => $stock,
+        ]);
+
+        return redirect('product');
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return redirect('product');
     }
 }
