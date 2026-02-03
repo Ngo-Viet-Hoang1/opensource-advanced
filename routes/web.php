@@ -32,11 +32,6 @@ Route::post('/save-age', function (Request $request) {
     return redirect('/');
 })->name('age.save');
 
-Route::get('/login', [AuthController::class, 'index']);
-Route::get('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/create', [AuthController::class, 'create']);
-
 Route::get('sign-in', [AuthController::class, 'SignIn']);
 Route::post('sign-in', [AuthController::class, 'CheckSignIn']);
 
@@ -70,5 +65,12 @@ Route::prefix('product')->group(function () {
         Route::delete('/{product}', 'destroy')->name('product.store');
     });
 });
+
+Route::view('/admin', 'layout.admin-layout');
+
+Route::get('/login', [AuthController::class, 'index']);
+Route::get('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::post('/register', [AuthController::class, 'create']);
 
 Route::fallback(fn() => view('not-found'));

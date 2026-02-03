@@ -22,12 +22,12 @@ class ProductController extends Controller
 
         $products = Product::all();
 
-        return view('product.index', ['title' => $title, 'products' => $products]);
+        return view('admin.product.index', ['title' => $title, 'products' => $products]);
     }
 
     public function create()
     {
-        return view('product.add');
+        return view('admin.product.add');
     }
 
     public function store(Request $request)
@@ -44,12 +44,12 @@ class ProductController extends Controller
 
     public function detail(string $id = '123')
     {
-        return view('product.detail', ['id' => $id]);
+        return view('admin.product.detail', ['id' => $id]);
     }
 
     public function edit(Product $product)
     {
-        return view('product.edit', ['product' => $product]);
+        return view('admin.product.edit', ['product' => $product]);
     }
 
     public function update(Product $product)
@@ -63,7 +63,7 @@ class ProductController extends Controller
             'stock' => $stock,
         ]);
 
-        return redirect('product');
+        return redirect('admin.product');
     }
 
     public function destroy(Product $product)
