@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -14,14 +16,19 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
+        $credentials = $request->only('email', 'password');
 
-        if ($username === 'ngoviethoang' && $password === '123456') {
-            return ['message' => 'Login Sucessfully'];
+        $isValidCredentials = Auth::attempt($credentials);
+
+        if (!$isValidCredentials) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
-        return ['message' => 'Login Failed'];
+        $request->session()->regenerate();
+
+        return redirect('/admin');
     }
 
     public function register()
@@ -64,5 +71,11 @@ class AuthController extends Controller
         }
 
         return ['message' => 'Sign In Failed'];
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
     }
 }
