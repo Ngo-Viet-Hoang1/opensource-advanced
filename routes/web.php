@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckTimeAccess;
 
 Route::view('/', 'welcome');
@@ -65,6 +66,11 @@ Route::prefix('product')->group(function () {
         Route::delete('/{product}', 'destroy')->name('product.store');
     });
 });
+
+// Route::prefix('categories')->group(function () {
+//     Route::controller(CategoryController::class)->group(function () {});
+// });
+Route::resource('categories', CategoryController::class);
 
 Route::view('/admin', 'layout.admin-layout');
 
