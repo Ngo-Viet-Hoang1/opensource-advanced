@@ -61,22 +61,35 @@ Route::prefix('product')->group(function () {
 
         Route::post('/store', 'store')->name('product.store');
 
-        Route::get('/{product}/edit', 'edit')->name('product.store');
-        Route::patch('/{product}', 'update')->name('product.store');
-        Route::delete('/{product}', 'destroy')->name('product.store');
+        Route::get('/{product}/edit', 'edit')->name('product.edit');
+        Route::patch('/{product}', 'update')->name('product.update');
+        Route::delete('/{product}', 'destroy')->name('product.destroy');
     });
 });
 
-// Route::prefix('categories')->group(function () {
-//     Route::controller(CategoryController::class)->group(function () {});
-// });
-Route::resource('categories', CategoryController::class);
+Route::prefix('categories')->group(function () {
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/', 'index')->name('categories.index');
+
+        Route::get('/create', 'create')->name('categories.create');
+
+        Route::post('/store', 'store')->name('categories.store');
+
+        Route::get('/{category}', 'show')->name('categories.show');
+
+        Route::get('/{category}/edit', 'edit')->name('categories.edit');
+
+        Route::patch('/{category}', 'update')->name('categories.update');
+
+        Route::delete('/{category}', 'destroy')->name('categories.destroy');
+    });
+});
 
 Route::view('/admin', 'layout.admin-layout');
 
-Route::get('/login', [AuthController::class, 'index']);
-Route::get('/register', [AuthController::class, 'register']);
+Route::get('/login', [AuthController::class, 'index'])->name('login.form');
+Route::get('/register', [AuthController::class, 'register'])->name('register.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-Route::post('/register', [AuthController::class, 'create']);
+Route::post('/register', [AuthController::class, 'create'])->name('register.process');
 
 Route::fallback(fn() => view('not-found'));
