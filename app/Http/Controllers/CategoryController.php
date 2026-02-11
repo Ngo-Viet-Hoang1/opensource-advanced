@@ -4,16 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::root()->with('childrenRecursive')->get();
+        $query = Category::with('parent');
 
-        return view('admin.categories.index', [
-            'categories' => $categories
-        ]);
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $isActive = $request->status === 'active' ? 1 : 0;
+            $query->where('is_active', $isActive);
+        }
+
+        $query->orderBy('id', 'desc');
+
+        $categories = $query->paginate(10);
+
+        $totalCategories = Category::count();
+
+        return view('admin.categories.index', compact('categories', 'totalCategories'));
     }
 
     public function create()
@@ -81,6 +96,16 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        //
+        if ($category->children()->count() > 0) {
+            return redirect()->route('categories.index')->with('error', 'Không thể xóa danh mục có danh mục con!');
+        }
+
+        if ($category->image) {
+            Storage::disk('public')->delete($category->image);
+        }
+
+        $category->delete();
+
+        return redirect()->route('categories.index')->with('success', 'Xóa danh mục thành công!');
     }
 }
