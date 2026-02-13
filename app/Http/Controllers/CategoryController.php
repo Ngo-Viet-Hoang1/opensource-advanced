@@ -82,7 +82,9 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        //
+        $category->load('parent', 'children');
+
+        return view('admin.categories.show', compact('category'));
     }
 
     public function edit(Category $category)
