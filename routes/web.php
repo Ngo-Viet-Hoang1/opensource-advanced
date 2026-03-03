@@ -8,8 +8,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckTimeAccess;
 
-Route::view('/', 'welcome');
-
 /* Route::resource('/', [Controller::class]); */
 
 Route::get('/age', function () {
@@ -49,21 +47,24 @@ Route::get('/about', function () {
 });
 
 /* Route::prefix('product')->middleware(CheckTimeAccess::class)->group(function () { */
-Route::prefix('product')->group(function () {
+Route::get('/', [ProductController::class, 'home'])->name('home');
+Route::prefix('products')->group(function () {
     Route::controller(ProductController::class)->group(function () {
 
         /* Route::get('/', 'index')->name('product')->middleware(CheckTimeAccess::class); */
-        Route::get('/', 'index')->name('product');
+        Route::get('/', 'index')->name('products.index');
 
-        Route::get('/create', 'create')->name('product.add');
+        Route::get('/create', 'create')->name('products.create');
 
-        Route::get('/detail/{id?}', 'detail')->name('product.detail');
+        Route::post('/store', 'store')->name('products.store');
 
-        Route::post('/store', 'store')->name('product.store');
+        Route::get('/{product}', 'show')->name('products.show');
 
-        Route::get('/{product}/edit', 'edit')->name('product.edit');
-        Route::patch('/{product}', 'update')->name('product.update');
-        Route::delete('/{product}', 'destroy')->name('product.destroy');
+        Route::get('/{product}/edit', 'edit')->name('products.edit');
+
+        Route::patch('/{product}', 'update')->name('products.update');
+
+        Route::delete('/{product}', 'destroy')->name('products.destroy');
     });
 });
 

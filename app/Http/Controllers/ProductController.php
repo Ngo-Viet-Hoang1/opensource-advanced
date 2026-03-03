@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Middleware\CheckTimeAccess;
 use App\Models\Product;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 /* class ProductController extends Controller implements HasMiddleware */
@@ -16,60 +15,22 @@ class ProductController extends Controller
     /*     return [CheckTimeAccess::class,]; */
     /* } */
 
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Products';
 
-        $products = Product::all();
+        $query = Product::with('category');
 
-        return view('admin.product.index', ['title' => $title, 'products' => $products]);
-    }
+        if ($request->filled('search')) {
+            $query = $query->where('name', 'like', '%' . $request->search . '%');
+        }
 
-    public function create()
-    {
-        return view('admin.product.add');
-    }
+        if ($request->filled('category_id')) {
+            $query = $query->where('category_id', $request->category_id);
+        }
 
-    public function store(Request $request)
-    {
-        $product = new Product();
-        $product->name = $request->get('name');
-        $product->price = $request->get('price');
-        $product->stock = $request->get('stock');
+        $products = $query->paginate(10)->withQueryString();
 
-        $product->save();
-
-        return redirect('/product');
-    }
-
-    public function detail(string $id = '123')
-    {
-        return view('admin.product.detail', ['id' => $id]);
-    }
-
-    public function edit(Product $product)
-    {
-        return view('admin.product.edit', ['product' => $product]);
-    }
-
-    public function update(Product $product)
-    {
-        $name = request()->get('name');
-        $price = request()->get('price');
-        $stock = request()->get('stock');
-        $product->update([
-            'name' => $name,
-            'price' => $price,
-            'stock' => $stock,
-        ]);
-
-        return redirect('admin.product');
-    }
-
-    public function destroy(Product $product)
-    {
-        $product->delete();
-
-        return redirect('product');
+        return view('admin.product.index', compact('title', 'products'));
     }
 }
