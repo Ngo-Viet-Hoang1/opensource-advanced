@@ -68,6 +68,20 @@ class ProductController extends Controller
         return to_route('products.index')->with('success', 'Product created successfully.');
     }
 
+    public function show(Product $product)
+    {
+        $related = Product::where('is_active', true)
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $categories = Category::with('childrenRecursive')->whereNull('parent_id')->get();
+
+        return view('customer.product.show', compact('product', 'related', 'categories'));
+    }
+
     public function edit(Product $product)
     {
         $title = 'Edit Product';
@@ -100,5 +114,16 @@ class ProductController extends Controller
         $product->delete();
 
         return to_route('products.index')->with('success', 'Product deleted successfully.');
+    }
+
+    public function home()
+    {
+        $categories = Category::with('childrenRecursive')->whereNull('parent_id')->get();
+
+        $bestSellers = Product::with('category')->orderByDesc('stock')->take(4)->get();
+
+        $newProducts = Product::with('category')->orderByDesc('created_at')->take(4)->get();
+
+        return view('customer.home', compact('bestSellers', 'newProducts', 'categories'));
     }
 }
