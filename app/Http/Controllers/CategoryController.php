@@ -156,6 +156,10 @@ class CategoryController extends Controller
             return redirect()->route('categories.index')->with('error', 'Không thể xóa danh mục có danh mục con!');
         }
 
+        if ($category->products()->count() > 0) {
+            return redirect()->route('categories.index')->with('error', 'Không thể xóa danh mục có sản phẩm!');
+        }
+
         if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }
